@@ -1,0 +1,13 @@
+yarn命令的使用相关文档：
+https://www.jianshu.com/p/efde33893026
+
+
+
+
+React组件生命周期事件：
+componentWillMount  挂载之前事件
+
+componentDidMount   挂载之后事件
+
+
+npm run build：打包项目
