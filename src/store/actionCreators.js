@@ -73,8 +73,8 @@ export const changeCurrentIndexAndSongDetailAction = (tag) => {
 export const getPlayListAction = (keyword) => {
     return dispatch => {
         getSongList(keyword).then(res => {
-            const songList = res.data.list || [];
-            const total = res.data.total || 0;
+            const songList = res.data?.list ?? [];
+            const total = res.data?.total ?? 0;
             dispatch(changePlayListAction(songList));
             dispatch(changePlayListTotalAction(total));
         });

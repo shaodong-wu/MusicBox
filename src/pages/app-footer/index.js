@@ -74,7 +74,7 @@ export default memo(function AppFooter() {
 
         getSongSource(currentSongDetail.rid).then(res => {
             // 设置 audio 的 src 地址
-            const songUrl = res.url;
+            const songUrl = res?.url?.data?.url ?? "";
             audioRef.current.src = songUrl;
 
             // 存入本地历史列表
@@ -202,15 +202,12 @@ export default memo(function AppFooter() {
 
     // 音乐播放错误处理
     const handleMusicError = () => {
-        if (!isPlaying) return false;
-
         message.open({
-            content: "播放失败, 自动切换下一首",
+            content: "播放失败",
             duration: 1,
-            onClose: () => {
-                changeMusicIndex(1);
-            }
-        })
+        });
+        audioRef.current.pause();
+        setIsPlaying(false);
     }
 
     // 音乐时间更新时

@@ -4,7 +4,7 @@ import * as actionTypes from './constants';
 
 const defaultState = Map({
   playList: [],
-  playListTotal: 0,
+  playListTotal: -1,
   currentSongIndex: -1,
   currentSongDetail: {},
   sequence: 0, // 0 列表循环 1 随机 2 单曲

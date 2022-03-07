@@ -50,9 +50,11 @@ export default memo(function AppCenter() {
     // redux hook
     const {
         playList,
+        playListTotal,
         currentSongDetail
     } = useSelector(state => ({
         playList: state.getIn(["player", "playList"]),
+        playListTotal: state.getIn(["player", "playListTotal"]),
         currentSongDetail: state.getIn(["player", "currentSongDetail"])
     }), shallowEqual);
     const dispatch = useDispatch();
@@ -64,20 +66,24 @@ export default memo(function AppCenter() {
     }, []);
 
     useEffect(() => {
-        if (playList.length <= 0) return false;
+        // 防止第一次初始化关闭 Loading
+        if (playListTotal < 0) return false;
 
-        // 去除当前全部播放列行样式
-        let prevslistItem = document.querySelector(".list-item.list-playing");
-        if (prevslistItem !== null) {
-            prevslistItem.className = "list-item";
+        // 列表长度为 0, 则不更新列表
+        if (playList.length > 0) {
+            // 去除当前全部播放列行样式
+            let prevslistItem = document.querySelector(".list-item.list-playing");
+            if (prevslistItem !== null) {
+                prevslistItem.className = "list-item";
+            }
+            // 更新搜索结果封面
+            setSearchCover(playList[0].albumpic);
         }
 
         // 隐藏 Loading搜索框
         setLoadingVisible(false);
 
-        // 更新搜索结果封面
-        setSearchCover(playList[0].albumpic);
-    }, [playList])
+    }, [playList, playListTotal])
 
     useEffect(() => {
         setCoverImgUrl(currentSongDetail.albumpic);
@@ -110,11 +116,26 @@ export default memo(function AppCenter() {
         setInfoVisible(true);
     }
 
-    const openSongSourceUrl = (musicId) => {
+    const loadDownSong = (musicId, musicName) => {
         if (musicId == undefined) return false;
 
         getSongSource(musicId).then(res => {
-            window.open(res.url);
+            const songUrl = res?.url?.data?.url ?? "";
+            if (songUrl) {
+                fetch(songUrl)
+                .then(response => response.blob())
+                .then(blob => {
+                    const objectURL = window.URL.createObjectURL(blob);
+                    const newA = document.createElement('a');
+                    newA.href = objectURL;
+                    newA.download = musicName;
+                    newA.click();
+                    window.URL.revokeObjectURL(objectURL);
+                });
+                message.info("已在后台开启下载", 1);
+            } else {
+                message.info("未知该歌曲源地址", 1);
+            }
         });
     }
 
@@ -124,7 +145,7 @@ export default memo(function AppCenter() {
 
         getSongSource(songDetail.rid).then(res => {
             let songTip = songDetail.name + " - " + songDetail.artist;
-            let surceUrl = res.url;
+            let surceUrl = res?.url?.data?.url;
 
             // 弹出 外链URL 框
             Modal.info({
@@ -140,7 +161,7 @@ export default memo(function AppCenter() {
                 content: (
                     <CenterShowMsg>
                         <p style={{ fontWeight: "300" }}>{songTip} 的外链地址为：</p>
-                        <input className="share-url" value={surceUrl} onMouseMove={e => { e.currentTarget.focus(); e.currentTarget.select(); }} />
+                        <input className="share-url" value={surceUrl || '未知该歌曲源地址'} onMouseMove={e => { e.currentTarget.focus(); e.currentTarget.select(); }} />
                         <p className="share-tips">* 获取到的音乐外链有效期较短，请按需使用。</p>
                     </CenterShowMsg>
 
@@ -179,16 +200,14 @@ export default memo(function AppCenter() {
                 </CenterBtnBar>
 
                 <CenterDataArea>
-                    <Suspense fallback={
-                        <div>page loading</div>
-                    }>
+                    <Suspense fallback={ <div>page loading</div> }>
                         {
                             renderRoutes(routes, {
                                 playingView: {
                                     handle: {
                                         loadMoreHandle: loadMoreSong,
                                         showSongSourceHandle: showSongSourceUrl,
-                                        openSongSourceHandle: openSongSourceUrl
+                                        loadDownSongHandle: loadDownSong
                                     }
                                 },
                                 sheetView: {
@@ -225,7 +244,7 @@ export default memo(function AppCenter() {
                         <span className="info-title">专辑：</span>{currentSongDetail.album || "未知"}<br />
                         <span className="info-title">时长：</span>{currentSongDetail.songTimeMinutes || "未知"}<br />
                         <span className="info-title">操作：</span>
-                        <span className="info-btn" onClick={() => openSongSourceUrl(currentSongDetail.rid)}>下载</span>
+                        <span className="info-btn" onClick={() => loadDownSong(currentSongDetail.rid, `${currentSongDetail.artist} - ${currentSongDetail.name}`)}>下载</span>
                         <span style={{ marginLeft: "10px" }} className="info-btn" onClick={() => showSongSourceUrl(currentSongDetail)}>外链</span>
                     </CenterInfoBox>
                 </Modal>

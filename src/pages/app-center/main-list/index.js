@@ -12,7 +12,7 @@ export default memo(function MainList(props) {
     const {
         loadMoreHandle,
         showSongSourceHandle,
-        openSongSourceHandle,
+        loadDownSongHandle,
     } = props.playingView.handle;
 
     // redux hook
@@ -85,7 +85,7 @@ export default memo(function MainList(props) {
                                             <span className="music-name-cult">{item.name}</span>
                                             <div className="list-menu" data-no={index}>
                                                 <span className="list-icon icon-play" data-no={index} title="点击播放这首歌" onClick={() => dispatch(changeCurrentIndexAndSongDetailAction(index - currentSongIndex))}></span>
-                                                <span className="list-icon icon-download" title="点击下载这首歌" onClick={() => openSongSourceHandle(item.rid)}></span>
+                                                <span className="list-icon icon-download" title="点击下载这首歌" onClick={() => loadDownSongHandle(item.rid, `${item.artist} - ${item.name}`)}></span>
                                                 <span className="list-icon icon-share" title="点击分享这首歌" onClick={() => showSongSourceHandle(item)}></span>
                                             </div>
                                         </span>
