@@ -29,19 +29,19 @@
 │   ├── node_modules
 │   ├── public
 │   ├── src
-|   |		├── assets					// 静态资源
-|   |   ├── common					// 公共配置
-|   |   ├── components			// 自定义组件
+|   |   ├── assets             // 静态资源
+|   |   ├── common             // 公共配置
+|   |   ├── components         // 自定义组件
 |   |   ├── pages
 |   |   ├── router
 |   |   ├── services
-|   |   ├── store						// 状态管理
+|   |   ├── store              // 状态管理
 |   |   └── utils
 |   |   ├── index.js
 │   ├── craco.config.js
 │   ├── package.json
 │   ├── yarn.lock
-│   ├── README.md						// 项目文档
+│   ├── README.md              // 项目文档
 ```
 
 
