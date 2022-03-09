@@ -8,7 +8,7 @@
 
 ## 项目说明 💻
 
-- 项目说明：♫ DDOnlinePlayer
+- 项目名称：♫ DDOnlinePlayer
 - 项目简介：基于 React 框架开发的在线音乐播放器，实现歌曲的搜索播放、分享与下载、歌词与进度条同步显示，以及热门推荐榜单。
 - 技  术  栈：React、React-Router、React-Redux、Axios
 - UI组件库：Ant Design
